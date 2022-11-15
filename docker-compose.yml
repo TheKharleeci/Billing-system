@@ -1,0 +1,56 @@
+version: "3.7"
+services:
+  rabbitmq:
+    image: rabbitmq:3.9.13-management-alpine
+    container_name: 'rabbitmq'
+    restart: always
+    environment:
+      - "RABBITMQ_DEFAULT_PASS=password"
+      - "RABBITMQ_DEFAULT_USER=username"
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - rabbitmq_go_net
+
+  db:
+    image: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_HOST=$DATABASE_HOST
+      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
+      - POSTGRES_USER=$DATABASE_USER
+      - POSTGRES_DB=$DATABASE_NAME
+      - POSTGRES_PORT=$DATABASE_PORT
+
+  api:
+    image: nodejs
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    
+    environment:
+      - POSTGRES_PASSWORD=123456789
+      - POSTGRES_DB=docker_db
+      - POSTGRES_PORT=5432
+      - DATABASE_URL=$DATABASE_URL
+      - RABBIT_MQ_URL=$RABBIT_MQ_URL
+    ports:
+      - ${PORT}:${PORT}
+    depends_on:
+      - db
+      - rabbitmq
+    command: npm start
+    volumes:
+      - .:/app/
+      - /app/node_modules
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
+
+volumes:
+  dbdata:
+  node_modules:  
