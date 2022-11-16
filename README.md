@@ -57,4 +57,4 @@ You must have
 
 ## Documentation
 
-    $ Documentation can be found at [Documentation](https://documenter.getpostman.com/view/19019131/2s8YmKRipn)
+    $ Documentation can be found at https://documenter.getpostman.com/view/19019131/2s8YmKRipn
