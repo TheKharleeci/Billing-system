@@ -3,6 +3,7 @@ import 'dotenv/config';
 import pgp from 'pg-promise';
 import promise from 'bluebird';
 import config from '../config/setup';
+import { logger } from '../utils/helpers.hash';
 
 const pg = pgp({ promiseLib: promise, noWarnings: true });
 const db = pg({
@@ -14,7 +15,7 @@ const db = pg({
 });
 const connection = (app:any, port:any) => new Promise(async resolve => {
   const server = app.listen(port, () => {
-    console.log(`Listening on port ${server.address().port}`);
+    logger.info(`Listening on port ${server.address().port}`);
     const originalClose = server.close.bind(server);
     server.close = () => new Promise(resolveClose => {
       originalClose(resolveClose);
@@ -22,12 +23,12 @@ const connection = (app:any, port:any) => new Promise(async resolve => {
     db
       .connect()
       .then(conn => {
-        console.log(
+        logger.info(
           `connected to ${conn.client.database} database`,
         );
       })
       .catch(err => {
-        console.log(err, 'err');
+        logger.error(err, 'err');
       });
   });
   resolve(server);

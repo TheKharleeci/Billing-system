@@ -8,7 +8,6 @@ import router from './api/gateway';
 import config from './config/setup';
 import { processTransaction } from './api/billing-worker/billing.services';
 
-
 export const app: Application = express();
 
 app.use(helmet());

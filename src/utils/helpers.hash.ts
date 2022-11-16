@@ -6,6 +6,7 @@ import { CustomerData } from './types/customer.interface'
 import config from '../config/setup';
 import { Request, Response, NextFunction } from "express";
 import { Schema } from 'joi';
+import SimpleNodeLogger from 'simple-node-logger';
 
 export const salt: string = bcrypt.genSaltSync(10);
 
@@ -38,6 +39,8 @@ export const validatePayload = (schema: Schema) => async (req: Request, res: Res
       .status(400)
       .json({ status: 'fail', message: message.replace(/["]/gi, '') });
     } catch (error) {
-      console.log(error);
+      logger.error(error);
     }
   };
+
+export const logger = SimpleNodeLogger.createSimpleLogger( );

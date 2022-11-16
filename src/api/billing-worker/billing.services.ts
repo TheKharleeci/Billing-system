@@ -2,6 +2,7 @@ import client, {Connection, Channel, ConsumeMessage} from 'amqplib'
 import {db} from '../../db/setup';
 import BillingQueries from '../../db/queries/billing'
 import config from '../../config/setup'
+import { logger } from '../../utils/helpers.hash';
 
 
 export const updateBillingRecord = async (data: string) => {  
@@ -12,7 +13,7 @@ const consumer = (channel: Channel) => (msg: ConsumeMessage | null): void => {
     if (msg) {    
       setTimeout(() => {
         const { transactionId } =  JSON.parse(msg.content.toString())
-        console.log('processing messages...');  
+        logger.info('processing messages...');  
         updateBillingRecord(transactionId)        
       },100);
       channel.ack(msg)
