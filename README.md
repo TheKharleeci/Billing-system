@@ -31,6 +31,7 @@ You must have
 ## Starting the dev server
 
     $ run `npm run migrate_up and npm run seed_up` to create db and run migrations
+    $ run `docker-compose up -d` to start the RabbitMQ
     $ run `npm run dev` to start the app
 
 ## Running the project with docker
@@ -56,4 +57,4 @@ You must have
 
 ## Documentation
 
-    $ Documentation can be found at 
+    $ Documentation can be found at [Documentation](https://documenter.getpostman.com/view/19019131/2s8YmKRipn)

@@ -25,6 +25,6 @@ export const processTransaction = async() => {
       config?.RABBIT_MQ_URL!
       );   
     channel = await connection.createChannel();
-    await channel.assertQueue('BillingQueue') 
-    await channel.consume('BillingQueue', consumer(channel));
+    await channel.assertQueue(config?.QUEUE_NAME!) 
+    await channel.consume(config?.QUEUE_NAME!, consumer(channel));
 }

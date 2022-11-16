@@ -6,7 +6,7 @@ export const connectionInit = async() => {
       config?.RABBIT_MQ_URL!
       )    
     const channel: Channel = await connection.createChannel()
-    await channel.assertQueue('BillingQueue')
+    await channel.assertQueue(config?.QUEUE_NAME!)
     return channel
 }
 

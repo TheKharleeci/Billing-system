@@ -20,7 +20,7 @@ app.use(customerRouter);
 app.use(billingRouter);
 
 app.get('/', (req: Request, res: Response) => {  
-    res.send('Welcome to FoodApp')
+    res.send('Welcome to Billing app')
 });
 
 const port = config?.PORT || 8080;

@@ -55,7 +55,6 @@
     "esm": "^3.2.25",
     "express": "^4.17.1",
     "helmet": "^6.0.0",
-    "joi-to-typescript": "^4.0.7",
     "jsonwebtoken": "^8.5.1",
     "mocha": "^10.1.0",
     "morgan": "^1.10.0",
