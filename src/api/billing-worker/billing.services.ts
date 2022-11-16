@@ -12,11 +12,11 @@ const consumer = (channel: Channel) => (msg: ConsumeMessage | null): void => {
     if (msg) {    
       setTimeout(() => {
         const { transactionId } =  JSON.parse(msg.content.toString())
+        console.log('processing messages...');  
         updateBillingRecord(transactionId)        
       },100);
       channel.ack(msg)
     }
-    { noAck: false }
   }
 
 let channel: Channel;

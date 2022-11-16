@@ -8,7 +8,7 @@ chai.use(chaiHttp);
 describe('Billing Routes', () => {
     it('should successfully login a customer', (done) => {
         chai.request(app)
-          .post('/login')
+          .post('/customer/login')
           .send(customerLogin)
           .end((err, res) => {
             process.env.CUSTOMER_TOKEN = res.body.data.token;
@@ -20,7 +20,7 @@ describe('Billing Routes', () => {
 
     it('should successfully fund a customers account', (done) => {
         chai.request(app)
-          .post('/fund')
+          .post('/billing/fund')
           .set('Authorization', `Bearer ${process.env.CUSTOMER_TOKEN}`)
           .send({ amount: 500})
           .end((err, res) => {            

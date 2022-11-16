@@ -11,6 +11,11 @@ export const connectionInit = async() => {
 }
 
 export const publishToQueue = async (queueName: string, data:string) => {
-  const newChannel = await connectionInit();
-  newChannel.sendToQueue(queueName, Buffer.from(data), {persistent: true});
+  try {
+    const newChannel = await connectionInit();
+    newChannel.sendToQueue(queueName, Buffer.from(data), {persistent: true});
+    console.log('Message published successfully');
+  } catch (error) {
+    console.log('Error in publishing message', error)
+  }
 }

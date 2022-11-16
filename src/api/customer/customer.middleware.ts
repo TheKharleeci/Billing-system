@@ -11,7 +11,6 @@ import * as CustomerHelpers from '../../utils/helpers.hash';
         .status(401)
         .json({ status: 'fail', message: 'Incorrect login details' });
     } catch (e) {
-        console.log(e);     
         return res
         .status(500)
         .json({ status: 'fail', message: 'Something went wrong' });

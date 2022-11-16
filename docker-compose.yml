@@ -32,9 +32,6 @@ services:
     restart: unless-stopped
     
     environment:
-      - POSTGRES_PASSWORD=123456789
-      - POSTGRES_DB=docker_db
-      - POSTGRES_PORT=5432
       - DATABASE_URL=$DATABASE_URL
       - RABBIT_MQ_URL=$RABBIT_MQ_URL
     ports:
