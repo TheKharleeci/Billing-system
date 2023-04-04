@@ -1,17 +1,17 @@
 import { Router } from 'express';
-import * as BillingController from './billing.controller'
-import { authenticate } from '../../utils/helpers.auth'
-import { validatePayload } from '../../utils/helpers.hash'
+import BillingController from './billing.controller';
+import { authenticate, validateBodyPayload } from '../../utils/generic.middleware';
 import { fundAccountSchema } from '../../utils/schema'
 
 const router = Router();
+const billingController = new BillingController();
 
 
 router.post(
   '/fund',
-  validatePayload(fundAccountSchema),
+  validateBodyPayload(fundAccountSchema),
   authenticate,
-  BillingController.billCustomer
+  billingController.billCustomer
 );
 
 export default router;

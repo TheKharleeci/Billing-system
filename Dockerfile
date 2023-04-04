@@ -1,17 +1,12 @@
-# Installs Node.js image
-FROM node:16.13.1-alpine3.14
-ENV NODE_ENV=development
+FROM node:12-alpine
 
-# sets the working directory for any RUN, CMD, COPY command
-# all files we put in the Docker container running the server will be in /usr/src/app (e.g. /usr/src/app/package.json)
-WORKDIR /app
-
-# Copies package.json, package-lock.json, tsconfig.json, .env to the root of WORKDIR
-COPY ["package.json", "package-lock.json", "tsconfig.json", ".env", "./"]
+RUN mkdir -p /usr/app
+WORKDIR /usr/app
+COPY package.json tsconfig.json wait.sh ./
 COPY src ./src
-# Installs all packages
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
+RUN npm install 
 
-COPY . .
-
-RUN npm install
-RUN npm install db-migrate-pg
+EXPOSE 4000
+CMD /wait && npm start

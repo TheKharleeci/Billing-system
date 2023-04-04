@@ -1,8 +1,14 @@
-import { db } from '../../db/setup';
-import { BillingRecord, BillingData} from "../../utils/types/billing.interface";
-import BillingQueries from '../../db/queries/billing'
+import db from '../../db/setup';
+import BillingQueries from '../../db/queries/billing';
+import { BillingRecord } from '../../utils/types/billing.interface';
 
+class BillingService {
 
-export const createRecord = async (data: BillingData): Promise<BillingRecord> => {  
-  return db.one(BillingQueries.createBillingRecord, [data.customer_id, data.amount ]);
-};
+  private billing = BillingQueries;
+
+  public async createRecord (customer_id: string, amount: number): Promise<BillingRecord | null>{  
+    return db.oneOrNone(this.billing.createBillingRecord, [customer_id, amount ]);
+  };
+}
+
+export default BillingService;

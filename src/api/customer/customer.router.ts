@@ -1,17 +1,20 @@
 import { Router } from 'express';
-import * as CustomerMiddleware from './customer.middleware'
-import * as CustomerController from './customer.controllers'
-import { validatePayload } from '../../utils/helpers.hash'
-import { loginSchema } from '../../utils/schema'
+import CustomerController from './customer.controllers';
+import CustomerMiddleware from './customer.middleware';
+import { loginSchema } from '../../utils/schema';
+import { validateBodyPayload } from '../../utils/generic.middleware';
+
 const router = Router();
+const customerController = new CustomerController();
+const customerMiddleware = new CustomerMiddleware();
 
 
 router.post(
   '/login',
-  validatePayload(loginSchema),
-  CustomerMiddleware.getCustomerAccount,
-  CustomerMiddleware.comparePassword,
-  CustomerController.login
+  validateBodyPayload(loginSchema),
+  customerMiddleware.getCustomerAccount,
+  customerMiddleware.checkPassword,
+  customerController.login
 );
 
 export default router;

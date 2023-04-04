@@ -1,22 +1,23 @@
-import { Request, Response, NextFunction } from "express";
-import { verifyToken } from './helpers.hash'
-export const authenticate = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const token: string | undefined = req.headers.authorization?.split(
-      " "
-    )[1];
+import jwt from 'jsonwebtoken';
+import { ICustomerData } from './types/customer.interface';
+import { IToken } from './types/token.interface';
+import bcrypt from 'bcrypt'
 
-    if (!token) {
-      return res.status(401).json({ msg: "You have to be logged in" });
-    }
-    const decoded = verifyToken(token);
-    req.body.data = decoded;
-    next();
-  } catch (error) {
-    return res.status(401).json({ msg: "You have to be logged in" });
-  }
-};
+export const createToken = (user: ICustomerData): string => {
+    return jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET as jwt.Secret, {
+        expiresIn: '10h'
+    })
+}
+
+export const verifyToken = async (
+    token: string
+): Promise<jwt.VerifyErrors | IToken> => {
+    return new Promise((resolve, reject) => {
+        jwt.verify(token, process.env.JWT_SECRET as jwt.Secret, (err, payload) => {
+            if (err) return reject(err);
+            resolve(payload as IToken)
+        })
+    })
+}
+
+export const comparePassword = (plainPassword:string, hashedPassword: string): boolean => bcrypt.compareSync(plainPassword, hashedPassword)

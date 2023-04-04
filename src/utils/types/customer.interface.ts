@@ -1,15 +1,11 @@
-export interface CustomerData {
+export interface ICustomerData {
     id: string;
     first_name: string;
     last_name: string;
     email: string
 }
 
-export interface Customer extends CustomerData{
+export interface ICustomer extends ICustomerData{
     password: string;
     salt: string;
 };
-
-export interface LoginResponse extends CustomerData{
-    token: string;
-}

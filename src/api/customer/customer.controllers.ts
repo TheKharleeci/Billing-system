@@ -1,20 +1,28 @@
 import {Request, Response } from 'express'
-import * as CustomerHelpers from '../../utils/helpers.hash';
-import { logger } from '../../utils/helpers.hash';
+import { createToken } from '../../utils/helpers.auth';
 
-  export const login = async (req: Request, res: Response )=> {
+class CustomerController {
+  /**
+   * Signs in the customer
+   * @param req 
+   * @param res 
+   * @returns - a token or an error
+   */
+  public login = async (req: Request, res: Response ): Promise<Response |void> => {
     try {
         const {
            password, salt, ...userData 
           } = req.body.user;
-        const token = CustomerHelpers.addDataToToken(userData);
+        const token = createToken(userData);
         return res
           .status(200)
           .json({ status: 'success', message: 'Login successful', data: { ...userData, token} });
     } catch (e) {
-        logger.error(e);     
-        return res
+        res
         .status(500)
-        .json({ status: 'fail', message: 'Something went wrong' });
+        .send(e);
     }
   }
+}
+
+export default CustomerController;

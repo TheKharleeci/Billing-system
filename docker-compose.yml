@@ -1,8 +1,8 @@
-version: "3.7"
+version: "3"
 services:
   rabbitmq:
     image: rabbitmq:3.9.13-management-alpine
-    container_name: 'rabbitmq'
+    container_name: rabbitmq
     restart: always
     environment:
       - "RABBITMQ_DEFAULT_PASS=password"
@@ -12,42 +12,55 @@ services:
       - 5672:5672
     networks:
       - rabbitmq_go_net
-
-  db:
-    image: postgres
-    ports:
-      - '5432:5432'
-    environment:
-      - POSTGRES_HOST=$DATABASE_HOST
-      - POSTGRES_PASSWORD=$DATABASE_PASSWORD
-      - POSTGRES_USER=$DATABASE_USER
-      - POSTGRES_DB=$DATABASE_NAME
-      - POSTGRES_PORT=$DATABASE_PORT
-
-  api:
-    image: nodejs
+  
+  billing-system:
+    container_name: billing-system
     build:
       context: .
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    
-    environment:
-      - DATABASE_URL=$DATABASE_URL
-      - RABBIT_MQ_URL=$RABBIT_MQ_URL
-    ports:
-      - ${PORT}:${PORT}
+      dockerfile: .Dockerfile
     depends_on:
       - db
       - rabbitmq
-    command: npm start
+    environment:
+      DATABASE_URL: postgres://postgres:password@postgres:5432/billing-system
+      NODE_ENV: development
+      PORT: 4000
+    ports:
+      - "4000:4000"
+
+  db:
+    container_name: postgres
+    image: postgres:10.4
+    ports:
+      - "5432:5432"
+    volumes: 
+      - ./postgresdata:/var/lib/postgresql/data
+      - ./src/migrations/sqls/*.sql:/docker-entrypoint-initdb.d/sqls
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=billing-system
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:4.18
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: email@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "8080:80"
     volumes:
-      - .:/app/
-      - /app/node_modules
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
 
 networks:
   rabbitmq_go_net:
     driver: bridge
 
 volumes:
-  dbdata:
-  node_modules:  
+  db-data:
+  pgadmin-data:

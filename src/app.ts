@@ -1,29 +1,48 @@
-import express, {Application, Request, Response, NextFunction } from 'express';
-import 'dotenv/config';
+import express, { Application } from 'express';
+import morgan from 'morgan';
 import helmet from 'helmet';
-import { json, urlencoded } from 'body-parser';
-import cors from 'cors';
-import { connection } from './db/setup';
-import router from './api/gateway';
-import config from './config/setup';
-import { processTransaction } from './api/billing-worker/billing.services';
+import db from './db/setup';
+import customerRouter from './api/customer/customer.router'
+import billingRouter from './api/billing/billing.router';
 
-export const app: Application = express();
+class App {
+    public express: Application;
+    public port: number;
 
-app.use(helmet());
-app.use(json());
-app.use(urlencoded({ extended: true }));
-app.use(cors());
+    constructor(port: number) {
+        this.express = express();
+        this.port = port;
+        
+        this.initialiseMiddleware();
+        this.routerConfig();
+        this.initialiseDBConnection();
+    }
 
-router(app);
+    private initialiseMiddleware(): void {
+        this.express.use(morgan('dev'));
+        this.express.use(helmet());
+        this.express.use(express.json());
+        this.express.use(express.urlencoded({ extended: false}));
+    }
 
-app.get('/', (req: Request, res: Response) => {  
-    res.send('Welcome to Billing app')
-});
+    private initialiseDBConnection() {
+        db.connect()
+        .then( async () => {
+            console.log(`Connected to database server`);
+        })
+        .catch(err => console.log(`Could not connect to database. ${err}`));
+    }
 
-const port = config?.PORT || 8080;
+    private routerConfig() {
+        this.express.use('/customer', customerRouter);
+        this.express.use('/billing', billingRouter);
+    }
 
-connection(app, port);
+    public listen(): void {
+        this.express.listen(this.port, () => {
+            console.log(`app is listening on port ${this.port}`);
+        });
+    }
+}
 
-processTransaction()
-
+export default App;

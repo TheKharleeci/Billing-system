@@ -1,7 +1,17 @@
-import { db } from '../../db/setup';
-import { Customer } from "../../utils/types/customer.interface";
-import UserQueries from '../../db/queries/customer'
+import db from '../../db/setup';
+import customerQueries from '../../db/queries/customer'
 
-export const getCustomer = async (data: string): Promise<Customer | null> => {  
-  return db.oneOrNone(UserQueries.getCustomerAccount, [data]);
-};
+class CustomerService {
+  private customer = customerQueries;
+
+  /**
+   * Fetchs a customer
+   * @param data - email or id of the user
+   * @returns - a customer data or null
+   */
+  public async getCustomer (data: string): Promise<string | null> {  
+    return db.oneOrNone(this.customer.getCustomerAccount, [data]);
+  };
+}
+
+export default CustomerService;
